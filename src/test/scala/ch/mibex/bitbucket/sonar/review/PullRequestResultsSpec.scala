@@ -25,7 +25,7 @@ class PullRequestResultsSpec extends Specification with Mockito {
     "yield congrats and approval if no issues are found" in new SettingsContext {
       val results = new PullRequestReviewResults(pluginConfig)
       results.formatAsMarkdown() must_==
-        """**SonarQube Analysis** reported no issues. Take a chocolate :-)
+        """**SonarQube Analysis** reported no issues.
           |
           |Note that only issues with severity >= ![MAJOR](https://raw.githubusercontent.com/mibexsoftware/sonar-bitbucket-plugin/master/src/main/resources/images/severity/MAJOR.png) (major) are reported.""".stripMargin
       results.countIssuesWithAboveMaxSeverity must_== 0

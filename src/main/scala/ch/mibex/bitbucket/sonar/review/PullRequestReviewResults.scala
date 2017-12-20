@@ -30,7 +30,7 @@ class PullRequestReviewResults(pluginConfiguration: SonarBBPluginConfig) {
 
     newIssuesBySeverity.values.toList match {
       case Nil =>
-        markdown.append("no issues. Take a chocolate :-)\n\n")
+        markdown.append("no issues.\n\n")
       case xs =>
         markdown.append(s"${xs.sum} ${StringUtils.pluralise("issue", xs.sum)}:\n\n")
         Severity.values().reverse foreach { s =>

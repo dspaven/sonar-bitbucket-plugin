@@ -2,7 +2,7 @@ package ch.mibex.bitbucket.sonar.diff
 
 import java.nio.file.Path
 
-import ch.mibex.bitbucket.sonar.GitBaseDirResolver
+import ch.mibex.bitbucket.sonar.{GitBaseDirResolver, SonarBBPluginConfig}
 import ch.mibex.bitbucket.sonar.client.{BitbucketClient, PullRequest}
 import org.junit.runner.RunWith
 import org.sonar.api.batch.fs.InputFile
@@ -17,6 +17,7 @@ import org.specs2.specification.Scope
 @RunWith(classOf[JUnitRunner])
 class IssuesOnChangedLinesFilterSpec extends Specification with Mockito {
   val bitbucketClient = mock[BitbucketClient]
+  val sonarPluginConfig = mock[SonarBBPluginConfig]
 
   private def readFile(path: String) =
     scala.io.Source.fromInputStream(getClass.getResourceAsStream(path)).mkString
@@ -26,9 +27,10 @@ class IssuesOnChangedLinesFilterSpec extends Specification with Mockito {
     "only yield issues on changed lines in complex diff" in new ComplexIssueContext {
       val pullRequest = PullRequest(id = 1, srcBranch = "develop", srcCommitHref = None, srcCommitHash = None, dstCommitHash = None)
       bitbucketClient.getPullRequestDiff(pullRequest) returns readFile("/diffs/5diffs-example.diff")
+      sonarPluginConfig.commentOnChangedLinesOnly() returns true
       val issuesNotOnChangedLines = Set(issue1, issue5, issue6, issue7)
       val expectedIssues = issues diff issuesNotOnChangedLines
-      val issuesOnChangedLinesFilter = new IssuesOnChangedLinesFilter(bitbucketClient, gitBaseDirResolver)
+      val issuesOnChangedLinesFilter = new IssuesOnChangedLinesFilter(bitbucketClient, sonarPluginConfig, gitBaseDirResolver)
 
       val onlyIssuesOnChangedLines = issuesOnChangedLinesFilter.filter(pullRequest, issues.toList)
 
@@ -38,7 +40,8 @@ class IssuesOnChangedLinesFilterSpec extends Specification with Mockito {
     "yield no issues when none in diff" in new NoNewIssuesContext {
       val pullRequest = PullRequest(id = 2, srcBranch = "develop", srcCommitHref = None, srcCommitHash = None, dstCommitHash = None)
       bitbucketClient.getPullRequestDiff(pullRequest) returns readFile("/diffs/2diffs-example.diff")
-      val issuesOnChangedLinesFilter = new IssuesOnChangedLinesFilter(bitbucketClient, gitBaseDirResolver)
+      sonarPluginConfig.commentOnChangedLinesOnly() returns true
+      val issuesOnChangedLinesFilter = new IssuesOnChangedLinesFilter(bitbucketClient, sonarPluginConfig, gitBaseDirResolver)
 
       val onlyIssuesOnChangedLines = issuesOnChangedLinesFilter.filter(pullRequest, issues.toList)
 

@@ -24,6 +24,7 @@ object SonarBBPlugin {
   final val BitbucketApproveUnapprove = "sonar.bitbucket.approvalFeatureEnabled"
   final val BitbucketBuildStatus = "sonar.bitbucket.buildStatusEnabled"
   final val SonarUnapprovalSeverityLevel = "sonar.bitbucket.maxSeverityApprovalLevel"
+  final val BitbucketCommentOnChangedLinesOnly = "sonar.bitbucket.commentOnChangedLinesOnly"
 }
 
 
@@ -125,6 +126,17 @@ object SonarBBPlugin {
       description = "If enabled, the plug-in will update the build status of the pull request depending on the " +
         "Sonar analysis result. The analysis and also the build is failed if there are any critical or blocker issues.",
       global = true
+    ),
+    new Property(
+      key = SonarBBPlugin.BitbucketCommentOnChangedLinesOnly,
+      name = "Add PR comments on changes lines only",
+      defaultValue = "true",
+      description = "Bitbucket has a bug #11925 where you can't add inline comments on non changed lines. The default before" +
+        "for the plugin is to only add comments for changed lines but this does mean the summary is not necessarily the actual" +
+        "number of new issues found. Use to disable this default behaviour and allow comments to be added for all issues" +
+        "in bitbucket file diff. This will mean the summary of issues is accurate but the comments for non line changes will" +
+        "only appear in the activity tab on the PR",
+      global = false
     )
   )
 )

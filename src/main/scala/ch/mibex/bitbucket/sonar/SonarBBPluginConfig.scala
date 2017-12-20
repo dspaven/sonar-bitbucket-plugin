@@ -32,6 +32,9 @@ class SonarBBPluginConfig(settings: Settings, server: Server) {
 
   def sonarApprovalSeverityLevel(): String = settings.getString(SonarBBPlugin.SonarUnapprovalSeverityLevel)
 
+  def commentOnChangedLinesOnly(): Boolean =
+    settings.getBoolean(SonarBBPlugin.BitbucketCommentOnChangedLinesOnly)
+
   def branchName(): String = {
     var branchName = settings.getString(SonarBBPlugin.BitbucketBranchName)
     Option(branchName) foreach { _ =>
